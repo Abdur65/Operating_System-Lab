@@ -43,7 +43,7 @@ void SJF()
         if(i != n-1)
             cout << "| P" << mp[v[i]] << " ";
         else
-            cout << "| P" << mp[v[i]] << "|";
+            cout << "| P" << mp[v[i]] << " |";
      }
 
      cout << endl;
