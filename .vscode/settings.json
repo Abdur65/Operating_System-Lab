@@ -3,5 +3,10 @@
         "activityBar.background": "#153046",
         "titleBar.activeBackground": "#1D4362",
         "titleBar.activeForeground": "#FAFCFE"
+    },
+    "files.associations": {
+        "deque": "cpp",
+        "string": "cpp",
+        "vector": "cpp"
     }
 }

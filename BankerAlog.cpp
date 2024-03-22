@@ -3,37 +3,45 @@ using namespace std;
 
 int main()
 {
-    int n; 
-    vector<vector<int, int>> allocation, maxi, need;
-    int A = 10, B = 5, C = 7;
-    int sumA, sumB, sumC;
-    vector<int> available, work, sequence;
-    vector<bool> finish;
+    int n, k;
 
+    //Take the number of processes
     cout << "Enter no. of threads: ";
     cin >> n;
 
-    //The allocation matrix
+    //Take the number of instances for each process, here number of process have been fixed to 3
+    int A, B, C;
+    cout << "Enter the instances for three process: ";
+    cin >> A >> B >> C;
+
+    //Declare the necessary matrix and vectors
+    int allocation[n][3], maxi[n][3], need[n][3];
+    int sumA = 0, sumB = 0, sumC = 0;
+    int available[3], work[3], sequence[n];
+    bool finish[n];
+
+    //Take input for the allocation and max matrices
+
+    cout << "Enter the allocation matrix: " << endl;
     for(int i = 0; i < n; i++)
     {
         for(int j = 0; j < 3; j++)
         {
-            int k; cin >> k;
-            allocation[i].push_back(k);
+            cin >> allocation[i][j];
         }
     }
 
-    //The max matrix
+    cout << "Enter the maximum matrix: " << endl;
     for(int i = 0; i < n; i++)
     {
         for(int j = 0; j < 3; j++)
         {
-            int k; cin >> k;
-            maxi[i].push_back(k);
+            cin >> maxi[i][j];
         }
     }
 
-    //Calculating available vector
+
+    //Calculating the available instances of each resource
     for(int i = 0; i < n; i++)
     {
         for(int j = 0; j < 3; j++)
@@ -53,28 +61,37 @@ int main()
         }
     }
 
-    available.push_back(A-sumA);
-    available.push_back(B-sumB);
-    available.push_back(C-sumC);
+    available[0] = (A-sumA);
+    available[1] = (B-sumB);
+    available[2] = (C-sumC);
 
-    //Calculating the need matrix
+   
+    //Calculating the need matrix using need = max - allocation 
     for(int i = 0; i < n; i++)
     {
         for(int j = 0; j < 3; j++)
         {
-            need[i].push_back(maxi[i][j] - allocation[i][j]);
+            need[i][j] = maxi[i][j] - allocation[i][j];
         }
     }
 
-    work = available;
+    //Start of bankers algorithm
 
-    for(int i = 0; i < n; i++)
+    // Define work to be equal to available array
+    for(int i = 0; i < 3; i++)
     {
-        finish.push_back(false);
+        work[i] = available[i];
     }
 
-    int count = 0, index = 0, ck;
+    //Declare all finish 0 -> n-1, to be false
+    for(int i = 0; i < n; i++)
+    {
+        finish[i] = false;
+    }
 
+    int count = 0, index = 0, ck, p = 0;
+
+    //Find and an index such that finish[index] = false and need <= work 
     while(count != n)
     {
         if(finish[index] == true)
@@ -93,7 +110,8 @@ int main()
             if(ck == 3)
             {
                 finish[index] = true;
-                sequence.push_back(index);
+                sequence[p] = index;
+                p++;
 
                 for(int i = 0; i < 3; i++)
                 {
@@ -107,15 +125,15 @@ int main()
                 count++;
             }
         }
-        if(index++ == n)
-            index = 0;
-        else
-            index++;
 
+        index++;
+        if(index == n)
+            index = 0;
     }
 
     bool f = true;
 
+    //Check if all the elements of the finish array is true or not
     for(int i = 0; i < n; i++)
     {
         if(!finish[i])
@@ -125,8 +143,11 @@ int main()
         }
     }
 
+    //If all are true then no deadlock occurs and a safe sequence is produced else goes to unsafe state
     if(f)
     {
+        cout << endl;
+        cout << "No deadlock. The safe sequence is: " << endl;
         cout << "<";
         for(int i = 0; i < n; i++)
         {
@@ -137,13 +158,30 @@ int main()
     }
     else
     {
-        cout << "System does not grant permission as safe state was not found.";
+        cout << "Deadlock detected. System does not grant permission as safe state was not found." << endl;
     }
-
-
 
 
 
 
     return 0;
 }
+
+/*
+Sample Input
+5
+ 
+10 5 7
+ 
+0 1 0
+2 0 0
+3 0 2
+2 1 1
+0 0 2
+ 
+7 5 3
+3 2 2
+9 0 2
+4 2 2
+5 3 3
+*/
