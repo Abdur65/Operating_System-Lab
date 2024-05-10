@@ -46,21 +46,28 @@ void Optimal()
         int p = 0;
         for(int i = 0; i < refString.size(); i++)
         {
+            vector<bool> visitedPage(100, false);
             if(find(frames.begin(), frames.end(), refString[i]) == frames.end())
             {
                 pageFault++;
-                if(p < frameSize)
+                if(i < frameSize)
                 {
-                    frames[p] = refString[i];
+                    frames[i] = refString[i];
                 }
                 else
                 {
-                    for(int j = 0; j < frames.size(); i++)
+                    int lastPage;
+                    vector<bool> visitedPage(100, false);
+                    for(int j = i; j < refString.size(); j++)
                     {
-                        
+                        if(visitedPage[frames[j]] == false)
+                        {
+                            lastPage = j;
+                            visitedPage[frames[j]] = true;
+                        }
                     }
+                    frames[lastPage] = refString[i];
                 }
-                p++;
             }
         }
 
@@ -73,7 +80,7 @@ void Optimal()
 
 int main()
 {
+    Optimal();
     FIFO();
-
     return 0;
 }
