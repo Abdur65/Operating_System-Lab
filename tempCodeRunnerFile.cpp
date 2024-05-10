@@ -1,5 +1,5 @@
-for(int i = 0; i < n; i++)
-    // {
-    //     cout << finish[i] << " ";
-    // }
-    // cout << endl;
+cout << "PageFault: " << pageFault << " --- ";
+            // for (auto u : frames)
+            //     cout << u << " ";
+
+            // cout << endl;

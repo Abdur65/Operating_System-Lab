@@ -34,70 +34,141 @@ void FIFO()
 // Optimal algorithm for page demand
 void Optimal()
 {
-    int frameSize = 3;
+    int frameSize = 1;
 
-    // while(frameSize != 8)
-    // {
-    vector<int> frames(frameSize, -1);
-    int pageFault = 0;
-    for (int i = 0; i < refString.size(); i++)
+    while (frameSize < 8)
     {
-        if (find(frames.begin(), frames.end(), refString[i]) == frames.end())
+        vector<int> frames(frameSize, -1);
+        int pageFault = 0;
+        int xy = 0;
+        for (int i = 0; i < refString.size(); i++)
         {
-            pageFault++;
-            if (i < frameSize)
+            if (find(frames.begin(), frames.end(), refString[i]) == frames.end())
             {
-                frames[i] = refString[i];
-            }
-            else
-            {
-                int lastPage;
-                int pl = 1;
-                vector<bool> visitedPage(10, false);
-                for (int j = i + 1; j < refString.size(); j++)
+                pageFault++;
+                if (i < frameSize or xy < frameSize)
                 {
-                    if (find(frames.begin(), frames.end(), refString[j]) != frames.end() and visitedPage[refString[j]] == false)
-                    {
-                        lastPage = refString[j];
-                        visitedPage[refString[j]] = true;
-                    }
+                    frames[xy] = refString[i];
+                    xy++;
                 }
-                for (int w = 0; w < frameSize; w++)
+                else
                 {
-                    if (visitedPage[frames[w]] == false)
+                    int lastPage;
+                    int pl = 1;
+                    vector<bool> visitedPage(100, false);
+                    for (int j = i; j < refString.size(); j++)
                     {
-                        //cout << 0 << " ";
-                        frames[w] = refString[i];
-                        pl = 0;
-                        break;
+                        if (find(frames.begin(), frames.end(), refString[j]) != frames.end() and visitedPage[refString[j]] == false)
+                        {
+                            lastPage = refString[j];
+                            visitedPage[refString[j]] = true;
+                        }
                     }
-                }
-                if (pl)
-                {
                     for (int w = 0; w < frameSize; w++)
                     {
-                        if (frames[w] == lastPage)
+                        if (visitedPage[frames[w]] == false)
                         {
+                            // cout << 0 << " ";
                             frames[w] = refString[i];
+                            pl = 0;
                             break;
+                        }
+                    }
+                    if (pl)
+                    {
+                        for (int w = 0; w < frameSize; w++)
+                        {
+                            if (frames[w] == lastPage)
+                            {
+                                frames[w] = refString[i];
+                                break;
+                            }
                         }
                     }
                 }
             }
+
+            // cout << "xy: " << xy << "---";
+            // cout << "PageFault: " << pageFault << " --- ";
+            // for (auto u : frames)
+            //     cout << u << " ";
+
+            // cout << endl;
         }
 
-        cout << "PageFault: " << pageFault << " --- ";
-        for (auto u : frames)
-            cout << u << " ";
+        cout << "For " << frameSize << " frames there are " << pageFault << " page faults." << endl;
 
-        cout << endl;
+        frameSize++;
     }
+}
 
-    // cout << "For " << frameSize << " frames there are " << pageFault << " page faults." << endl;
+void LRU()
+{
+    int frameSize = 1;
 
-    frameSize++;
+    while (frameSize != 8)
+    {
+        vector<int> frames(frameSize, -1);
+        int pageFault = 0;
+        int xy = 0;
+        for (int i = 0; i < refString.size(); i++)
+        {
+            if (find(frames.begin(), frames.end(), refString[i]) == frames.end())
+            {
+                pageFault++;
+                if (i < frameSize or xy < frameSize)
+                {
+                    frames[xy] = refString[i];
+                    xy++;
+                }
+                else
+                {
+                    int lastPage;
+                    int pl = 1;
+                    vector<bool> visitedPage(10, false);
+                    for (int j = i + 1; j > -1; j--)
+                    {
+                        if (find(frames.begin(), frames.end(), refString[j]) != frames.end() and visitedPage[refString[j]] == false)
+                        {
+                            lastPage = refString[j];
+                            visitedPage[refString[j]] = true;
+                        }
+                    }
+                    for (int w = 0; w < frameSize; w++)
+                    {
+                        if (visitedPage[frames[w]] == false)
+                        {
+                            // cout << 0 << " ";
+                            frames[w] = refString[i];
+                            pl = 0;
+                            break;
+                        }
+                    }
+                    if (pl)
+                    {
+                        for (int w = 0; w < frameSize; w++)
+                        {
+                            if (frames[w] == lastPage)
+                            {
+                                frames[w] = refString[i];
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
 
-    // }
+            // cout << "PageFault: " << pageFault << " --- ";
+            // for (auto u : frames)
+            //     cout << u << " ";
+
+            // cout << endl;
+        }
+
+        cout << "For " << frameSize << " frames there are " << pageFault << " page faults." << endl;
+
+        frameSize++;
+    }
 }
 
 int main()
