@@ -126,7 +126,7 @@ void LRU()
                     int lastPage;
                     int pl = 1;
                     vector<bool> visitedPage(10, false);
-                    for (int j = i + 1; j > -1; j--)
+                    for (int j = i-1; j > -1; j--)
                     {
                         if (find(frames.begin(), frames.end(), refString[j]) != frames.end() and visitedPage[refString[j]] == false)
                         {
@@ -173,7 +173,10 @@ void LRU()
 
 int main()
 {
+    cout << "Optimal";
     Optimal();
+    cout << "LRU";
+    LRU();
 
     return 0;
 }
